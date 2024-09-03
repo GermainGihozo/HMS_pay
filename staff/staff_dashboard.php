@@ -40,8 +40,48 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Staff Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h3 {
+            color: #007bff;
+        }
+        .table {
+            background-color: #ffffff;
+        }
+        .table thead {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .input-group .form-control {
+            border-right: none;
+        }
+        .input-group .btn {
+            border-left: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container mt-5">
         <h3>Welcome, <?php echo $_SESSION['username']; ?></h3>
 
@@ -78,5 +118,9 @@ $result = $stmt->get_result();
             </tbody>
         </table>
     </div>
+    <?php
+    
+include'footer.php';
+?>
 </body>
 </html>

@@ -80,11 +80,12 @@ $conn->close();
     </div>
   </div>
 
-  <footer class="bg-dark text-white text-center py-3 mt-auto animate-footer">
-    <div class="container">
-      <p>&copy; 2024 Patient Pay System. All rights reserved.</p>
-    </div>
-  </footer>
+  <footer class="bg-dark text-white text-center py-3 mt-auto fade-in">
+        <div class="container">
+            <p>&copy; 2024 Patient Pay System. All rights reserved.</p>
+            <p>Your health, our priority. Secure payments, seamless care.</p>
+        </div>
+    </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
