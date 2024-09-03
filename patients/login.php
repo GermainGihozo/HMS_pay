@@ -26,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         } else {
             // Login failed
-            echo "Invalid username or password.";
+            echo "<div class='alert alert-danger'>Invalid username or password.</div>";
         }
     } else {
         // Username not found
-        echo "Invalid username or password.";
+        echo "<div class='alert alert-danger'>Invalid username or password.</div>";
     }
     
     $stmt->close();
@@ -39,24 +39,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $conn->close();
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"> -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
   <title>Patient Login</title>
 </head>
-<body class="bg-dark text-light">
-  <div class="container mt-5">
+<body class="d-flex flex-column min-vh-100 bg-dark text-light">
+  <header class="bg-primary text-white text-center py-4 animate-header">
+    <div class="container">
+        <h1 class="display-4">Patient Pay System</h1>
+        <p class="lead">Secure and efficient access to your healthcare billing and payment.</p>
+    </div>
+  </header>
+
+  <div class="container mt-5 flex-grow-1">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="card bg-secondary text-light">
+        <div class="card bg-secondary text-light shadow-lg animate-card">
           <div class="card-body">
-            <h4 class="card-title text-center mb-4">Patient Login</h4>
+            <h4 class="card-title text-center mb-4 animate-heading">Patient Login</h4>
             <form id="login-form" action="login.php" method="post">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
@@ -66,14 +71,23 @@ $conn->close();
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
               </div>
-              <button type="submit" class="btn btn-primary w-100">Login</button>
+              <button type="submit" class="btn btn-primary w-100 animate-button">Login</button>
               <p class="mt-3 text-center">Don't have an account? <a href="register.php" class="text-light">Register here</a></p>
-            </>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <script src="server.js"></script>
+
+  <footer class="bg-dark text-white text-center py-3 mt-auto animate-footer">
+    <div class="container">
+      <p>&copy; 2024 Patient Pay System. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

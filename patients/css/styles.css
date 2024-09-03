@@ -1,0 +1,73 @@
+/* styles.css */
+
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #343a40;
+    margin: 0;
+    padding: 0;
+    color: #f8f9fa;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Card styling with animation */
+.card {
+    background-color: #6c757d;
+    animation: fadeIn 1.5s ease-out;
+    border-radius: 15px;
+}
+
+.animate-card {
+    animation: slideInUp 1.5s ease-out;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: bold;
+    color: #f8f9fa;
+}
+
+/* Button styling with animation */
+.btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 50px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.animate-button {
+    animation: slideInUp 1.5s ease-out 0.5s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+/* Footer styles with animation */
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 15px 0;
+    margin-top: auto;
+    animation: fadeIn 1.5s ease-out 2s;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}

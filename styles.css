@@ -1,0 +1,101 @@
+/* styles.css */
+
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #343a40;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Header styling with animation */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px 0;
+    animation: fadeIn 1.5s ease-out;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    animation: slideInLeft 1.5s ease-out;
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    animation: slideInLeft 1.5s ease-out 0.5s;
+}
+
+/* Section styles */
+main h2 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+    animation: fadeIn 1.5s ease-out 1s;
+}
+
+/* Button styling with animation */
+.user-links .btn {
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border-radius: 50px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    animation: slideInUp 1.5s ease-out;
+}
+
+.user-links .btn:hover {
+    transform: translateY(-3px);
+}
+
+/* Specific button colors */
+.btn-primary {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-info:hover {
+    background-color: #117a8b;
+}
+
+/* Footer styles with animation */
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 15px 0;
+    margin-top: auto;
+    animation: fadeIn 1.5s ease-out 1.5s;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
