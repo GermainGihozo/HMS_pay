@@ -15,6 +15,14 @@ include 'connection.php';
 
 // Get the logged-in user's username
 $loggedInUsername = $_SESSION['username'];
+
+// Initialize search variables
+$searchTerm = "";
+
+// Check if the search form is submitted
+if (isset($_GET['search'])) {
+    $searchTerm = $_GET['search'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,7 +47,7 @@ $loggedInUsername = $_SESSION['username'];
       width: 0;
       overflow: hidden;
     }
-    .error{
+    .error {
       color: Red;
     }
     .sidebar a {
@@ -131,6 +139,14 @@ $loggedInUsername = $_SESSION['username'];
         </ul>
       </nav>
       <main class="main-content flex-fill">
+        <!-- Search form -->
+        <form method="GET" action="users.php" class="mb-4">
+          <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search users..." value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </div>
+        </form>
+
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
         <table class="table table-striped table-dark">
           <thead>
@@ -143,9 +159,10 @@ $loggedInUsername = $_SESSION['username'];
           <tbody>
             <?php
             // Fetch users from the database, excluding the logged-in user
-            $sql = "SELECT * FROM users WHERE username != ?";
+            $sql = "SELECT * FROM users WHERE username != ? AND (username LIKE ? OR role LIKE ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $loggedInUsername);
+            $searchTermLike = '%' . $searchTerm . '%';
+            $stmt->bind_param("sss", $loggedInUsername, $searchTermLike, $searchTermLike);
             $stmt->execute();
             $result = $stmt->get_result();
 
@@ -171,6 +188,7 @@ $loggedInUsername = $_SESSION['username'];
             ?>
           </tbody>
         </table>
+        
         <!-- Add User Modal -->
         <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -180,82 +198,9 @@ $loggedInUsername = $_SESSION['username'];
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-              <?php
-
-// Initialize variables
-$names = $userName = $password = $confirm_password = $role = "";
-$nameErr = $usernameErr = $passErr = "";
-
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate names
-    if (empty($_POST['names'])) {
-        $nameErr = "Names required";
-    } else {
-        $names = $_POST['names'];
-    }
-
-    // Validate username
-    if (empty($_POST['username'])) {
-        $usernameErr = "Username required";
-    } else {
-        $userName = $_POST['username'];
-    }
-
-    // Validate password
-    if (empty($_POST['password'])) {
-        $passErr = "Password required";
-    } else {
-        $password = $_POST['password'];
-    }
-
-    // Confirm password match
-    if ($password != $_POST['confirm_password']) {
-        $passErr = "Passwords do not match";
-    } else {
-        $confirm_password = $_POST['confirm_password'];
-    }
-
-    // Assign role
-    $role = $_POST['role'];
-
-    // If there are no errors, proceed to insert data into the database
-    if (empty($nameErr) && empty($usernameErr) && empty($passErr)) {
-        // Hash the password
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-        // Include the database configuration file
-        include 'connection.php'; // Ensure this file has the database connection code
-
-        // Prepare and bind
-        $stmt = $conn->prepare("INSERT INTO users(names, username, password, role) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $names, $userName, $hashedPassword, $role);
-
-        // Execute the query
-        if ($stmt->execute()) {
-          echo "New user created successfully!";
-      } else {
-          echo "Error: " . $stmt->error;
-      }
-      
-      
-        // Close the statement and connection
-        $stmt->close();
-        $conn->close();
-    } else {
-        // Output error messages
-        echo "Please correct the following errors:<br>";
-        if (!empty($nameErr)) echo $nameErr . "<br>";
-        if (!empty($usernameErr)) echo $usernameErr . "<br>";
-        if (!empty($passErr)) echo $passErr . "<br>";
-    }
-}
-?>
-
-
                 <form id="add-user-form" method="POST" action="users.php">
                   <div class="mb-3">
-                    <label for="names" class="form-label">names <span class="error">*<?php echo $nameErr ?></span></label>
+                    <label for="names" class="form-label">Names <span class="error">*<?php echo $nameErr ?></span></label>
                     <input type="text" class="form-control" id="names" name="names" required>
                   </div>
                   <div class="mb-3">
@@ -263,23 +208,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" class="form-control" id="username" name="username" required>
                   </div>
                   <div class="mb-3">
-                    <label for="password" class="form-label">password <span class="error">* <?php echo $passErr ?></span></label>
+                    <label for="password" class="form-label">Password <span class="error">* <?php echo $passwordErr ?></span></label>
                     <input type="password" class="form-control" id="password" name="password" required>
                   </div>
                   <div class="mb-3">
-                    <label for="confirm-password" class="form-label">Confirm password <span class="error">* <?php echo $passErr ?></span> </label>
-                    <input type="password" class="form-control" id="confirm-password" name="confirm_password" required>
-                  </div>
-                  <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
+                    <label for="role" class="form-label">Role <span class="error">* <?php echo $roleErr ?></span></label>
                     <select class="form-select" id="role" name="role" required>
                       <option value="admin">Admin</option>
-                      <option value="doctor">Doctor</option>
-                      <option value="nurse">Nurse</option>
                       <option value="staff">Staff</option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary">Add User</button>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="submit" class="btn btn-primary">Add User</button>
+                  </div>
                 </form>
               </div>
             </div>
@@ -289,18 +231,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <footer class="footer">
-      <div class="container text-center">
-        <p>&copy; <?php echo date("Y"); ?> HMS. All rights reserved.</p>
+      <div class="container">
+        <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
       </div>
     </footer>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.getElementById('toggler').addEventListener('click', function() {
-      document.getElementById('sidebar').classList.toggle('collapsed');
-      document.getElementById('main-content').classList.toggle('collapsed');
-    });
-  </script>
+  <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
