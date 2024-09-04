@@ -17,7 +17,7 @@ $names = $address = $tel_no = $gender = $age = "";
 $errors = [];
 
 // Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['names'])) {
     // Retrieve and sanitize form data
     $names = htmlspecialchars($_POST['names']);
     $address = htmlspecialchars($_POST['address']);
@@ -50,6 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+// Handle search query
+$searchTerm = "";
+if (isset($_GET['search'])) {
+    $searchTerm = htmlspecialchars($_GET['search']);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -164,96 +171,107 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </ul>
       </nav>
       <main class="main-content flex-fill">
+        <!-- Add a search form -->
+        <form method="GET" action="patients.php" class="d-flex mb-3">
+          <input type="text" name="search" class="form-control me-2" placeholder="Search by name..." value="<?php echo $searchTerm; ?>">
+          <button type="submit" class="btn btn-outline-success">Search</button>
+        </form>
+
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPatientModal">Add Patient</button>
         <table class="table table-striped table-dark">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Gender</th>
-      <th>Age</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php
-    require_once "connection.php";
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Age</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            // Modify the SQL query to filter results based on the search term
+            $sql = "SELECT * FROM patients";
+            if (!empty($searchTerm)) {
+                $sql .= " WHERE names LIKE ?";
+            }
+            $stmt = $conn->prepare($sql);
+            if (!empty($searchTerm)) {
+                $searchTerm = "%$searchTerm%";
+                $stmt->bind_param("s", $searchTerm);
+            }
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-    $sql = "SELECT * FROM patients";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td>" . htmlspecialchars($row['names']) . "</td>
+                            <td>" . htmlspecialchars($row['gender']) . "</td>
+                            <td>" . htmlspecialchars($row['age']) . "</td>
+                            <td>
+                                <a href='edit_patient.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Edit</a>
+                                <a href='delete_patient.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"Are you sure you want to delete this patient?\")'>Delete</a>
+                            </td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4'>No patients found</td></tr>";
+            }
 
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
-                    <td>" . htmlspecialchars($row['names']) . "</td>
-                    <td>" . htmlspecialchars($row['gender']) . "</td>
-                    <td>" . htmlspecialchars($row['age']) . "</td>
-                    <td>
-                        <a href='edit_patient.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                        <a href='delete_patient.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"Are you sure you want to delete this patient?\")'>Delete</a>
-                    </td>
-                  </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='4'>No patients found</td></tr>";
-    }
+            $stmt->close();
+            $conn->close();
+            ?>
+          </tbody>
+        </table>
 
-    $stmt->close();
-    $conn->close();
-    ?>
-  </tbody>
-</table>
+        <!-- Add Patient Modal -->
 
-
-  <!-- Add Patient Modal -->
-  <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addPatientModalLabel">Add Patient</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="addPatientModalLabel">Add Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="add-patient-form" method="POST" action="patients.php">
+                      <div class="mb-3">
+                        <label for="patient-name" class="form-label">Names</label>
+                        <input type="text" class="form-control" id="patient-name" name="names" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="adress" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="adress" name="address" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="telephone" class="form-label">Tel no</label>
+                        <input type="number" class="form-control" id="telephone" name="tel_no" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="patient-gender" class="form-label">Gender</label>
+                        <select class="form-select" id="patient-gender" name="gender" required>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="patient-age" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="patient-age" name="age" required>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Add Patient</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
         </div>
-        <div class="modal-body">
-          <form id="add-patient-form" method="POST" action="patients.php">
-            <div class="mb-3">
-              <label for="patient-name" class="form-label">Names</label>
-              <input type="text" class="form-control" id="patient-name" name="names" required>
-            </div>
-            <div class="mb-3">
-              <label for="adress" class="form-label">Address</label>
-              <input type="text" class="form-control" id="adress" name="address" required>
-            </div>
-            <div class="mb-3">
-              <label for="telephone" class="form-label">Tel no</label>
-              <input type="number" class="form-control" id="telephone" name="tel_no" required>
-            </div>
-            <div class="mb-3">
-              <label for="patient-gender" class="form-label">Gender</label>
-              <select class="form-select" id="patient-gender" name="gender" required>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="patient-age" class="form-label">Age</label>
-              <input type="number" class="form-control" id="patient-age" name="age" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Patient</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Rest of your body content -->
-  </main>
+      </main>
     </div>
 
     <footer class="footer">
-      <div class="container text-center">
-        <p>&copy; <?php echo date("Y"); ?> HMS. All rights reserved.</p>
-      </div>
+        <div class="container text-center">
+            <p>&copy; <?php echo date("Y"); ?> HMS. All rights reserved.</p>
+          </div>
     </footer>
   </div>
 
