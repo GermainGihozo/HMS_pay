@@ -101,7 +101,7 @@ if (isset($_GET['search'])) {
   <div class="d-flex flex-column min-vh-100">
     <header class="header">
       <div class="container d-flex justify-content-between align-items-center">
-        <h1><?php echo $pageTitle; ?></h1>
+       
         <button class="toggler-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="false" aria-controls="sidebar">
           <i class="fas fa-bars"></i> <!-- Font Awesome icon -->
         </button>
@@ -110,7 +110,7 @@ if (isset($_GET['search'])) {
 
     <div class="d-flex flex-grow-1">
       <nav id="sidebar" class="sidebar collapse d-lg-block p-3">
-        <h4 class="text-center">Admin Panel</h4>
+      <h1><?php echo $pageTitle; ?></h1>
         <ul class="nav flex-column">
           <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'dashboard') ? 'active' : ''; ?>" href="dashboard.php">Dashboard</a>

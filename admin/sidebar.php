@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['username'])) {
@@ -8,13 +8,7 @@ if (!isset($_SESSION['username'])) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <title>Admin Dashboard</title>
+
   <style>
     body {
       background-color: #f8f9fa;
@@ -37,15 +31,15 @@ if (!isset($_SESSION['username'])) {
     .nav-link.active {
       background-color: #495057;
     }
-  </style>
-</head>
+    </style>
+
 <body>
   <div class="d-flex">
     <nav class="sidebar p-3">
-      <h2 class="text-center">Admin Panel</h2>
+      <!-- <h4 class="text-center">Admin Panel</h4> -->
       <ul class="nav flex-column">
         <li class="nav-item">
-          <a class="nav-link active" href="dashboard.php">Dashboard</a>
+          <a class="nav-link" href="dashboard.php">Dashboard</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="users.php">Manage Users</a>
@@ -60,7 +54,7 @@ if (!isset($_SESSION['username'])) {
           <a class="nav-link" href="billing.php">Billing</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="reports.php">Reports</a>
+          <a class="nav-link  active" href="reports.php">Reports</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="settings.php">Settings</a>
@@ -70,12 +64,7 @@ if (!isset($_SESSION['username'])) {
         </li>
       </ul>
     </nav>
-    <div class="main-content flex-fill">
-      <h2>Welcome to the Admin Dashboard, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
-      <!-- Dashboard content goes here -->
-    </div>
+   
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-</body>
-</html>
