@@ -1,12 +1,24 @@
 <?php
+session_start(); // Start the session at the very top
+
 include 'connection.php';
 include 'navbar.php'; // Include the navigation bar
-session_start();
 
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+
+// Session timeout handling
+$timeout_duration = 1800; // 30 minutes
+
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    session_unset(); // Unset session variables
+    session_destroy(); // Destroy the session
+    header("Location: login.php?timeout=true");
+    exit();
+}
+$_SESSION['LAST_ACTIVITY'] = time(); // Update last activity time
 
 // Fetch user details
 $username = $_SESSION['username'];

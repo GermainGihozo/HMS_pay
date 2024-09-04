@@ -1,12 +1,24 @@
 <?php
+session_start(); // Start the session at the very top
+
 include 'connection.php';
 include 'navbar.php';
-session_start();
 
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
 }
+
+// Session timeout handling
+$timeout_duration = 1800; // 30 minutes
+
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    session_unset(); // Unset session variables
+    session_destroy(); // Destroy the session
+    header("Location: login.php?timeout=true");
+    exit();
+}
+$_SESSION['LAST_ACTIVITY'] = time(); // Update last activity time
 
 $username = $_SESSION['username'];
 
@@ -57,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <td>
                             <form method="post" action="payments.php">
                                 <input type="hidden" name="bill_id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="btn btn-success">Pay Now</button>
+                                <button type="submit" class="btn btn-primary">Pay Now</button>
                             </form>
                         </td>
                     </tr>
@@ -65,6 +77,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </tbody>
         </table>
     </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Patient Pay System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

@@ -1,6 +1,6 @@
 <?php
 include 'connection.php';
-include 'navbar.php'; // Include the navigation bar
+include 'navbar.php';
 session_start();
 
 if (!isset($_SESSION['username'])) {
