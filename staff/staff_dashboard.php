@@ -3,6 +3,7 @@ include 'connection.php';
 include 'navbar.php';
 session_start();
 
+// Check if the user is logged in and not an Admin
 if (!isset($_SESSION['userId']) || $_SESSION['role'] == 'Admin') {
     header("Location: staff_login.php");
     exit();
@@ -13,18 +14,19 @@ if (isset($_GET['search'])) {
     $searchTerm = $_GET['search'];
     $searchTerm = "%$searchTerm%";
 
-    // Fetching patient data with search filter
+    // Fetch patient data with search filter
     $stmt = $conn->prepare("
-        SELECT patients.id, patients.names, bills.amount 
+        SELECT patients.id, patients.names, bills.amount, bills.status 
         FROM patients 
         LEFT JOIN bills ON patients.id = bills.patient_id
         WHERE patients.names LIKE ?
     ");
+
     $stmt->bind_param("s", $searchTerm);
 } else {
-    // Fetching all patient data without search filter
+    // Fetch all patient data without search filter
     $stmt = $conn->prepare("
-        SELECT patients.id, patients.names, bills.amount 
+        SELECT patients.id, patients.names, bills.amount, bills.status
         FROM patients 
         LEFT JOIN bills ON patients.id = bills.patient_id
     ");
@@ -83,7 +85,7 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="container mt-5">
-        <h3>Welcome, <?php echo $_SESSION['username']; ?></h3>
+        <h3>Welcome, <?php echo $_SESSION['staff_username']; ?></h3>
 
         <!-- Search Form -->
         <form class="mb-4" method="GET" action="staff_dashboard.php">
@@ -98,29 +100,39 @@ $result = $stmt->get_result();
             <thead class="thead-dark">
                 <tr>
                     <th>Patient Name</th>
-                    <th>Current Bill</th>
+                    <th>Current Bill (Rwf)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['names']); ?></td>
-                        <td><?php echo $row['amount'] !== null ? '$' . number_format($row['amount'], 2) : 'No bill'; ?></td>
-                        <td>
-                            <a href="generate_bill.php?patient_id=<?php echo $row['id']; ?>" class="btn btn-success">Generate Bill</a>
-                            <?php if ($row['amount'] !== null): ?>
-                                <a href="cancel_bill.php?patient_id=<?php echo $row['id']; ?>" class="btn btn-danger">Cancel Bill</a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['names']); ?></td>
+                    <td>
+                        <?php 
+                        // Check if status exists and handle accordingly
+                        if (isset($row['status']) && $row['status'] === 'Paid') {
+                            echo 'No bill';
+                        } elseif ($row['amount'] !== null) {
+                            echo number_format($row['amount'], 2);
+                        } else {
+                            echo 'No bill';
+                        }
+                        ?>
+                    </td>
+                    <td>
+                        <a href="generate_bill.php?patient_id=<?php echo $row['id']; ?>" class="btn btn-success">Generate Bill</a>
+                        
+                        <!-- Only show the Cancel Bill button if the bill is unpaid -->
+                        <?php if (isset($row['status']) && $row['status'] === 'Unpaid'): ?>
+                            <a href="cancel_bill.php?patient_id=<?php echo $row['id']; ?>" class="btn btn-danger">Cancel Bill</a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
             </tbody>
         </table>
     </div>
-    <?php
-    
-include'footer.php';
-?>
+    <?php include 'footer.php'; ?>
 </body>
 </html>

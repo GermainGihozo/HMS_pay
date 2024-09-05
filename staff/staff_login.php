@@ -3,7 +3,7 @@ include 'connection.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
+    $username = $_POST['staff_username'];
     $password = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT id, role, password FROM users WHERE username = ?");
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($role != 'Admin') {
                 $_SESSION['userId'] = $userId;
                 $_SESSION['role'] = $role;
-                $_SESSION['username'] = $username;
+                $_SESSION['staff_username'] = $username;
                 header("Location: staff_dashboard.php");
             } else {
                 echo "Admin users cannot log in here.";
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <form id="login-form" action="staff_login.php" method="post">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <input type="text" class="form-control" id="username" name="staff_username" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>

@@ -19,12 +19,58 @@ $loggedInUsername = $_SESSION['username'];
 // Initialize search variables
 $searchTerm = "";
 
+// Initialize error variables
+$nameErr = $usernameErr = $passwordErr = $roleErr = "";
+
 // Check if the search form is submitted
 if (isset($_GET['search'])) {
     $searchTerm = $_GET['search'];
 }
-?>
 
+// Validate the Add User form input (if submitted)
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+    // Check if names field is empty
+    if (empty($_POST['names'])) {
+        $nameErr = "Names are required";
+    }
+
+    // Check if username field is empty
+    if (empty($_POST['username'])) {
+        $usernameErr = "Username is required";
+    }
+
+    // Check if password field is empty
+    if (empty($_POST['password'])) {
+        $passwordErr = "Password is required";
+    }
+
+    // Check if role field is empty
+    if (empty($_POST['role'])) {
+        $roleErr = "Role is required";
+    }
+
+    // Only proceed with adding user if there are no errors
+    if (empty($nameErr) && empty($usernameErr) && empty($passwordErr) && empty($roleErr)) {
+        // Hash the password before inserting into the database
+        $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+        // Prepare and bind statement to insert new user into the database
+        $stmt = $conn->prepare("INSERT INTO users (names, username, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $_POST['names'], $_POST['username'], $hashedPassword, $_POST['role']);
+
+        if ($stmt->execute()) {
+            // Success: Redirect or display success message (optional)
+            header("Location: users.php");
+            exit();
+        } else {
+            // Handle database insertion error (optional)
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
