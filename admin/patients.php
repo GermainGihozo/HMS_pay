@@ -13,7 +13,7 @@ $currentPage = "patients"; // Sets the active link in the sidebar
 require_once "connection.php"; // Ensure this is the correct path to your connection file
 
 // Initialize variables
-$names = $address = $tel_no = $gender = $age = "";
+$names = $address = $tel_no = $gender = $age = $password ="";
 $errors = [];
 
 // Check if the form is submitted
@@ -24,6 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['names'])) {
     $tel_no = htmlspecialchars($_POST['tel_no']);
     $gender = htmlspecialchars($_POST['gender']);
     $age = htmlspecialchars($_POST['age']);
+    $password = 123;
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Validate form data
     if (empty($names)) $errors[] = "Names are required";
@@ -33,8 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['names'])) {
 
     // If there are no errors, proceed to insert data into the database
     if (empty($errors)) {
-        $stmt = $conn->prepare("INSERT INTO patients (names, address, telNo, gender, age) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssi", $names, $address, $tel_no, $gender, $age);
+        $stmt = $conn->prepare("INSERT INTO patients (names, address, telNo, gender, age ,password) VALUES (?, ?, ?, ?, ?,?)");
+        $stmt->bind_param("sssssi", $names, $address, $tel_no, $gender, $age,$hashedPassword);
 
         if ($stmt->execute()) {
             echo "<p class='text-success'>New patient added successfully!</p>";

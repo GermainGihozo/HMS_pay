@@ -35,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $update_stmt->bind_param("i", $bill_id);
     if ($update_stmt->execute()) {
         echo "Payment successful.";
+        header("location:bills.php");
     } else {
         echo "Payment failed.";
     }
