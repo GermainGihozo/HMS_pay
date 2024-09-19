@@ -53,9 +53,9 @@ if (!isset($_SESSION['username'])) {
         <li class="nav-item">
           <a class="nav-link" href="patients.php">Manage Patients</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="appointments.php">Manage Appointments</a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link" href="billing.php">Billing</a>
         </li>

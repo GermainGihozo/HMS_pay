@@ -149,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
       <div class="container d-flex justify-content-between align-items-center">
        
         <button class="toggler-btn d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar" aria-expanded="false" aria-controls="sidebar">
-          <i class="fas fa-bars"></i> <!-- Font Awesome icon -->
+          <i class="fas fa-bars"></i>
         </button>
       </div>
     </header>
@@ -167,9 +167,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
           <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'patients') ? 'active' : ''; ?>" href="patients.php">Manage Patients</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'appointments') ? 'active' : ''; ?>" href="appointments.php">Manage Appointments</a>
-          </li>
+          </li> -->
           <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'billing') ? 'active' : ''; ?>" href="billing.php">Billing</a>
           </li>
@@ -247,15 +247,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                 <form id="add-user-form" method="POST" action="users.php">
                   <div class="mb-3">
                     <label for="names" class="form-label">Names <span class="error">*<?php echo $nameErr ?></span></label>
-                    <input type="text" class="form-control" id="names" name="names" required>
+                    <input type="text" class="form-control" id="names" name="names" placeholder="Enter Users Names" required>
                   </div>
                   <div class="mb-3">
                     <label for="username" class="form-label">Username <span class="error">* <?php echo $usernameErr ?></span></label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter a username" required>
                   </div>
                   <div class="mb-3">
                     <label for="password" class="form-label">Password <span class="error">* <?php echo $passwordErr ?></span></label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" class="form-control" id="password" name="password"  placeholder="Enter a password" required>
+
                   </div>
                   <div class="mb-3">
                     <label for="role" class="form-label">Role <span class="error">* <?php echo $roleErr ?></span></label>

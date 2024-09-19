@@ -54,83 +54,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $conn->close();
 }
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/login.css"> <!-- Link to external CSS -->
   <title>Admin Login</title>
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .login-container {
-      max-width: 400px;
-      margin: auto;
-      padding: 2rem;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .error {
-      color: red;
-    }
-  </style>
 </head>
 <body>
+  <!-- Header Section -->
+  <div class="header">
+    <h1>Welcome to Patient Pay - Admin Portal</h1>
+  </div>
+
+  <!-- Login Form -->
   <div class="login-container mt-5">
-    <h2 class="text-center mb-4">Admin Login</h2>
+    <h2>Admin Login</h2>
     <form id="login-form" method="POST" action="login.php">
       <div class="mb-3">
         <label for="username" class="form-label">Username
-        <span class="error">*<?php echo isset($usernameErr) ? $usernameErr : ''; ?></span>
+          <span class="error">*<?php echo isset($usernameErr) ? $usernameErr : ''; ?></span>
         </label>
-        <input type="text" class="form-control" id="username" name="username" required>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Password 
-        <span class="error">*<?php echo isset($passwordErr) ? $passwordErr : ''; ?></span>
+          <span class="error">*<?php echo isset($passwordErr) ? $passwordErr : ''; ?></span>
         </label>
-        <input type="password" class="form-control" id="password" name="password" required>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary">Login</button>
     </form>
   </div>
-  <script src="login.js"></script>
+
+  <!-- Footer Section -->
+  <div class="footer">
+    <p>&copy; 2024 Patient Pay. All rights reserved.</p>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-<?php
-// require_once'connection.php';
-
-// $names="Germain";
-// $username="igihozo";
-// $password="admin";
-
-// $hashedPassword =password_hash($password,PASSWORD_DEFAULT);
-// $sql= "INSERT INTO users(names,username,password) VALUES (?,?,?)";
-// // prepare statement
-// $stmt= $conn->prepare($sql);
-// if ($stmt===false) {
-//   die("Error preparing the statement" .$conn->error);
-// }
-// // bind parameters
-// $stmt->bind_param("sss",$names,$username,$hashedPassword);
-// // execute parameter
-// if($stmt->execute()){
-//   echo"record inserted successfully";
-// }
-// else{
-//   echo"error  :" . $stmt->error;
-// }
-// // close statement
-// $stmt->close();
-// $conn->close();
-
-
-
-?> 

@@ -1,0 +1,116 @@
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Login Container Styles */
+  .login-container {
+    max-width: 400px;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .login-container:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Form and Label Styles */
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #333;
+  }
+  
+  .form-label {
+    font-weight: 500;
+    color: #444;
+  }
+  
+  .form-control {
+    border-radius: 30px;
+    padding: 10px;
+    transition: border 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+  }
+  
+  .btn-primary {
+    border-radius: 30px;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    font-size: 18px;
+    width: 100%;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #45a049;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
+  }
+  
+  /* Animation for Login Container */
+  .login-container {
+    animation: slide-in 0.8s ease-out;
+  }
+  
+  @keyframes slide-in {
+    0% {
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Header Styles */
+  .header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    top: 0;
+  }
+  
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  /* Footer Styles */
+  .footer {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+  }
+  
+  .footer p {
+    margin: 0;
+    font-size: 14px;
+  }
+  

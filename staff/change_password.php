@@ -73,5 +73,8 @@ $conn->close();
             <button type="submit" class="btn btn-primary">Update Password</button>
         </form>
     </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+  <script src="js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

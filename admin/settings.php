@@ -1,32 +1,44 @@
 <?php
+session_start(); // Ensure session is started to access session variables
 include 'navbar.php';
 include 'connection.php';
 
 // Functionality for updating admin details and project settings goes here...
+
 // Change Background Image
 if (isset($_POST['change_bg'])) {
-    $bgImage = $_FILES['background_image']['name'];
-    $target = "images/" . basename($bgImage);
+    if (isset($_FILES['background_image']) && $_FILES['background_image']['error'] === UPLOAD_ERR_OK) {
+        $bgImage = $_FILES['background_image']['name'];
+        $target = "images/" . basename($bgImage);
 
-    if (move_uploaded_file($_FILES['background_image']['tmp_name'], $target)) {
-        // Update background image in database or settings file
-        echo "<div class='alert alert-success'>Background image updated!</div>";
+        if (move_uploaded_file($_FILES['background_image']['tmp_name'], $target)) {
+            // Update background image in database or settings file if needed
+            echo "<div class='alert alert-success'>Background image updated!</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Failed to update background image.</div>";
+        }
     } else {
-        echo "<div class='alert alert-danger'>Failed to update background image.</div>";
+        echo "<div class='alert alert-danger'>No image uploaded or upload error.</div>";
     }
 }
 
 // Update Admin Name
 if (isset($_POST['update_name'])) {
-    $newName = $_POST['admin_name'];
+    $newName = trim($_POST['admin_name']);
     $userId = $_SESSION['userId'];
-    
-    $stmt = $conn->prepare("UPDATE hms_users SET names = ? WHERE id = ?");
-    $stmt->bind_param("si", $newName, $userId);
-    if ($stmt->execute()) {
-        echo "<div class='alert alert-success'>Name updated successfully!</div>";
+
+    // Check for empty input
+    if (!empty($newName)) {
+        $stmt = $conn->prepare("UPDATE hms_users SET names = ? WHERE id = ?");
+        $stmt->bind_param("si", $newName, $userId);
+        if ($stmt->execute()) {
+            echo "<div class='alert alert-success'>Name updated successfully!</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Failed to update name.</div>";
+        }
+        $stmt->close(); // Close statement
     } else {
-        echo "<div class='alert alert-danger'>Failed to update name.</div>";
+        echo "<div class='alert alert-danger'>Name cannot be empty.</div>";
     }
 }
 
@@ -35,15 +47,15 @@ if (isset($_POST['change_password'])) {
     $currentPassword = $_POST['current_password'];
     $newPassword = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
     $userId = $_SESSION['userId'];
-    
+
     // Check current password
     $stmt = $conn->prepare("SELECT password FROM hms_users WHERE id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    
-    if (password_verify($currentPassword, $row['password'])) {
+
+    if ($row && password_verify($currentPassword, $row['password'])) {
         // Update password
         $stmt = $conn->prepare("UPDATE hms_users SET password = ? WHERE id = ?");
         $stmt->bind_param("si", $newPassword, $userId);
@@ -55,24 +67,29 @@ if (isset($_POST['change_password'])) {
     } else {
         echo "<div class='alert alert-danger'>Incorrect current password.</div>";
     }
+    $stmt->close(); // Close statement
 }
 
 // Update Project Title
 if (isset($_POST['update_title'])) {
-    $newTitle = $_POST['project_title'];
-    
-    // Store the title in a settings table or a config file
-    // Example: Update the title in the 'settings' table
-    $stmt = $conn->prepare("UPDATE project_settings SET title = ?");
-    $stmt->bind_param("s", $newTitle);
-    if ($stmt->execute()) {
-        echo "<div class='alert alert-success'>Project title updated!</div>";
+    $newTitle = trim($_POST['project_title']);
+
+    if (!empty($newTitle)) {
+        // Store the title in a settings table or a config file
+        $stmt = $conn->prepare("UPDATE project_settings SET title = ?");
+        $stmt->bind_param("s", $newTitle);
+        if ($stmt->execute()) {
+            echo "<div class='alert alert-success'>Project title updated!</div>";
+        } else {
+            echo "<div class='alert alert-danger'>Failed to update project title.</div>";
+        }
     } else {
-        echo "<div class='alert alert-danger'>Failed to update project title.</div>";
+        echo "<div class='alert alert-danger'>Project title cannot be empty.</div>";
     }
+    $stmt->close(); // Close statement
 }
 
-
+$conn->close(); // Close database connection
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +108,7 @@ if (isset($_POST['update_title'])) {
         <div class="mb-4">
             <h4>Change Background Image</h4>
             <form method="post" enctype="multipart/form-data">
-                <input type="file" name="background_image" class="form-control">
+                <input type="file" name="background_image" class="form-control" accept="image/*" required>
                 <button type="submit" class="btn btn-primary mt-2" name="change_bg">Change Background</button>
             </form>
         </div>
@@ -100,7 +117,7 @@ if (isset($_POST['update_title'])) {
         <div class="mb-4">
             <h4>Update Admin Name</h4>
             <form method="post">
-                <input type="text" name="admin_name" class="form-control" placeholder="Enter new name">
+                <input type="text" name="admin_name" class="form-control" placeholder="Enter new name" required>
                 <button type="submit" class="btn btn-primary mt-2" name="update_name">Update Name</button>
             </form>
         </div>
@@ -109,8 +126,8 @@ if (isset($_POST['update_title'])) {
         <div class="mb-4">
             <h4>Change Password</h4>
             <form method="post">
-                <input type="password" name="current_password" class="form-control" placeholder="Current password">
-                <input type="password" name="new_password" class="form-control mt-2" placeholder="New password">
+                <input type="password" name="current_password" class="form-control" placeholder="Current password" required>
+                <input type="password" name="new_password" class="form-control mt-2" placeholder="New password" required>
                 <button type="submit" class="btn btn-primary mt-2" name="change_password">Change Password</button>
             </form>
         </div>
@@ -119,10 +136,11 @@ if (isset($_POST['update_title'])) {
         <div class="mb-4">
             <h4>Update Project Title</h4>
             <form method="post">
-                <input type="text" name="project_title" class="form-control" placeholder="Enter new project title">
+                <input type="text" name="project_title" class="form-control" placeholder="Enter new project title" required>
                 <button type="submit" class="btn btn-primary mt-2" name="update_title">Update Title</button>
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

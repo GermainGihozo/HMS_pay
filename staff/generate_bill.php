@@ -53,5 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="btn btn-primary">Generate Bill</button>
         </form>
     </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

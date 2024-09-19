@@ -68,9 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <td><?php echo $row['date']; ?></td>
                         <td><?php echo $row['amount']; ?></td>
                         <td>
-                            <form method="post" action="payments.php">
+                            <form method="post" action="payment/process_payment.php">
                                 <input type="hidden" name="bill_id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="btn btn-primary">Pay Now</button>
+                                <button type="submit" class="btn btn-primary">Pay with Mobile money</button>
                             </form>
                         </td>
                     </tr>

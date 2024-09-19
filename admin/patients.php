@@ -157,9 +157,9 @@ if (isset($_GET['search'])) {
           <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'patients') ? 'active' : ''; ?>" href="patients.php">Manage Patients</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link <?php echo ($currentPage == 'appointments') ? 'active' : ''; ?>" href="appointments.php">Manage Appointments</a>
-          </li>
+          <!-- <li class="nav-item"> -->
+            <!-- <a class="nav-link <?php echo ($currentPage == 'appointments') ? 'active' : ''; ?>" href="appointments.php">Manage Appointments</a> -->
+          <!-- </li> -->
           <li class="nav-item">
             <a class="nav-link <?php echo ($currentPage == 'billing') ? 'active' : ''; ?>" href="billing.php">Billing</a>
           </li>
@@ -241,15 +241,15 @@ if (isset($_GET['search'])) {
                     <form id="add-patient-form" method="POST" action="patients.php">
                       <div class="mb-3">
                         <label for="patient-name" class="form-label">Names</label>
-                        <input type="text" class="form-control" id="patient-name" name="names" required>
+                        <input type="text" class="form-control" id="patient-name" name="names" placeholder="Enter patient's names" required>
                       </div>
                       <div class="mb-3">
                         <label for="adress" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="adress" name="address" required>
+                        <input type="text" class="form-control" id="adress" name="address" placeholder="Enter the Patient's address" required>
                       </div>
                       <div class="mb-3">
                         <label for="telephone" class="form-label">Tel no</label>
-                        <input type="number" class="form-control" id="telephone" name="tel_no" required>
+                        <input type="number" class="form-control" id="telephone" name="tel_no" placeholder="Enter the telephone number" required>
                       </div>
                       <div class="mb-3">
                         <label for="patient-gender" class="form-label">Gender</label>
@@ -260,7 +260,7 @@ if (isset($_GET['search'])) {
                       </div>
                       <div class="mb-3">
                         <label for="patient-age" class="form-label">Age</label>
-                        <input type="number" class="form-control" id="patient-age" name="age" required>
+                        <input type="number" class="form-control" id="patient-age" name="age" placeholder="Enter patient's ages" required>
                       </div>
                       <button type="submit" class="btn btn-primary">Add Patient</button>
                     </form>

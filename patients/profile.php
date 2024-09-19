@@ -82,5 +82,6 @@ $conn->close();
             <button type="submit" class="btn btn-primary">Update Profile</button>
         </form>
     </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

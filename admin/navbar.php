@@ -1,15 +1,15 @@
 <?php
-// Set the session lifetime to 2 hours (7200 seconds)
-ini_set('session.gc_maxlifetime', 7200);
-session_set_cookie_params(7200);
-session_start();
-
-// Check if user is an Admin
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
+// Check if the session is not started yet
+if (session_status() == PHP_SESSION_NONE) {
+    // Set session parameters before starting the session
+    ini_set('session.cookie_lifetime', 3600); // Adjust as needed
+    session_set_cookie_params(3600); // Adjust as needed
+    
+    // Start the session
+    session_start();
 }
 ?>
+
 
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -29,9 +29,9 @@ if (!isset($_SESSION['username'])) {
         <li class="nav-item">
           <a class="nav-link" href="patients.php">Manage Patients</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="appointments.php">Manage Appointments</a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link" href="billing.php">Billing</a>
         </li>
