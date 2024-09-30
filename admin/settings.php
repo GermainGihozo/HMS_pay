@@ -1,5 +1,5 @@
 <?php
-session_start(); // Ensure session is started to access session variables
+session_start(); 
 include 'navbar.php';
 include 'connection.php';
 
@@ -29,7 +29,7 @@ if (isset($_POST['update_name'])) {
 
     // Check for empty input
     if (!empty($newName)) {
-        $stmt = $conn->prepare("UPDATE hms_users SET names = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE users SET names = ? WHERE id = ?");
         $stmt->bind_param("si", $newName, $userId);
         if ($stmt->execute()) {
             echo "<div class='alert alert-success'>Name updated successfully!</div>";
@@ -46,10 +46,10 @@ if (isset($_POST['update_name'])) {
 if (isset($_POST['change_password'])) {
     $currentPassword = $_POST['current_password'];
     $newPassword = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
-    $userId = $_SESSION['userId'];
+    $userId = $_SESSION['id'];
 
     // Check current password
-    $stmt = $conn->prepare("SELECT password FROM hms_users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -57,7 +57,7 @@ if (isset($_POST['change_password'])) {
 
     if ($row && password_verify($currentPassword, $row['password'])) {
         // Update password
-        $stmt = $conn->prepare("UPDATE hms_users SET password = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
         $stmt->bind_param("si", $newPassword, $userId);
         if ($stmt->execute()) {
             echo "<div class='alert alert-success'>Password updated successfully!</div>";
@@ -98,6 +98,7 @@ $conn->close(); // Close database connection
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <title>Settings - Admin</title>
 </head>
 <body>
