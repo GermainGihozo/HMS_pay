@@ -22,25 +22,16 @@ $_SESSION['LAST_ACTIVITY'] = time(); // Update last activity time
 
 $username = $_SESSION['username'];
 
-// Fetch unpaid bills for the logged-in user
-$stmt = $conn->prepare("SELECT b.id, b.date, b.amount FROM bills b JOIN patients p ON b.patient_id = p.id WHERE p.names = ? AND b.status = 'unpaid'");
+// Fetch unpaid bills with email, phone number, and amount for the logged-in user
+$stmt = $conn->prepare("
+    SELECT b.id, b.date, b.amount, p.email, p.telNo 
+    FROM bills b 
+    JOIN patients p ON b.patient_id = p.id 
+    WHERE p.names = ? AND b.status = 'unpaid'
+");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $bill_id = $_POST['bill_id'];
-    // Update bill status to 'paid'
-    $update_stmt = $conn->prepare("UPDATE bills SET status = 'paid' WHERE id = ?");
-    $update_stmt->bind_param("i", $bill_id);
-    if ($update_stmt->execute()) {
-        echo "Payment successful.";
-        header("location:bills.php");
-    } else {
-        echo "Payment failed.";
-    }
-    $update_stmt->close();
-}
 
 ?>
 
@@ -50,6 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <title>Make Payment</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body class="bg-dark text-light">
     <div class="container mt-5">
@@ -68,10 +60,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <td><?php echo $row['date']; ?></td>
                         <td><?php echo $row['amount']; ?></td>
                         <td>
-                            <form method="post" action="payment/process_payment.php">
-                                <input type="hidden" name="bill_id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="btn btn-primary">Pay with Mobile money</button>
-                            </form>
+                        <form method="post" action="payment/process_payment.php">
+    <input type="hidden" name="bill_id" id="bill_id" value="<?php echo $row['id']; ?>">
+    <input type="hidden" name="email" id="email" value="<?php echo $row['email']; ?>">
+    <input type="hidden" name="phonenumber" id="phonenumber" value="<?php echo $row['telNo']; ?>">
+    <input type="hidden" name="amount" id="amount" value="<?php echo $row['amount']; ?>">
+    <button type="submit" class="btn btn-primary">Pay now</button>
+</form>
+
+
                         </td>
                     </tr>
                 <?php endwhile; ?>

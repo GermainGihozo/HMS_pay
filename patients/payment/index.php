@@ -10,7 +10,7 @@
   <input type="email" name="email" id="email" placeholder="Email" required />
   <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Phone Number" required />
   <input type="text" name="amount" id="amount" placeholder="Amount" required />
-  <button type="submit">Pay with Mobile money</button>
+  <button type="submit">Pay Now</button>
 </form>
 
 </body>

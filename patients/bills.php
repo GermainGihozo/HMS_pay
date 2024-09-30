@@ -22,6 +22,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>View Bills</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body class="bg-dark text-light">
     <div class="container mt-5">

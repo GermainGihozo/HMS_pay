@@ -5,7 +5,7 @@
         if($_GET['status'] == 'cancelled')
         {
             // echo 'YOu cancel the payment';
-            header('Location: index.php');
+            header('Location: ..payment.php');
         }
         elseif($_GET['status'] == 'successful')
         {
