@@ -10,8 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check for missing fields
     if (empty($email) || empty($phoneNumber) || empty($amount)) {
-        die("Payment error: One or more required parameters missing");
+        // JavaScript alert message
+        echo "<script>
+                alert('Payment error: please insert your email address to continue');
+                window.location.href = '../profile.php'; // Redirect to profile.php after alert
+              </script>";
+        exit(); // Stop further execution
     }
+    
+    
 
     // Flutterwave credentials
     $public_key = 'FLWPUBK_TEST-f9724ae8e606279ab4ae3ed7a68cece2-X';

@@ -20,7 +20,7 @@ $loggedInUsername = $_SESSION['username'];
 $searchTerm = "";
 
 // Initialize error variables
-$nameErr = $usernameErr = $passwordErr = $roleErr = "";
+$nameErr = $usernameErr = $passwordErr = $roleErr = $emailErr = "";
 
 // Check if the search form is submitted
 if (isset($_GET['search'])) {
@@ -48,6 +48,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     if (empty($_POST['role'])) {
         $roleErr = "Role is required";
     }
+    if (empty($_POST['email'])) {
+      $emailErr = "Email is required";
+  } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "Invalid email format";
+  }
 
     // Only proceed with adding user if there are no errors
     if (empty($nameErr) && empty($usernameErr) && empty($passwordErr) && empty($roleErr)) {
@@ -55,8 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         $hashedPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
         // Prepare and bind statement to insert new user into the database
-        $stmt = $conn->prepare("INSERT INTO users (names, username, password, role) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $_POST['names'], $_POST['username'], $hashedPassword, $_POST['role']);
+        $stmt = $conn->prepare("INSERT INTO users (names, username, password, role, email) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $_POST['names'], $_POST['username'], $hashedPassword, $_POST['role'], $_POST['email']);
 
         if ($stmt->execute()) {
             // Success: Redirect or display success message (optional)
@@ -199,6 +204,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
             <tr>
               <th>Username</th>
               <th>Role</th>
+              <th>Email</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -218,6 +224,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     echo "<tr>
                             <td>" . htmlspecialchars($row['username']) . "</td>
                             <td>" . htmlspecialchars($row['role']) . "</td>
+                            <td>" . htmlspecialchars($row['email']) . "</td>
                             <td>
                                 <a href='edit_user.php?id=" . $row['id'] . "' class='btn btn-warning btn-sm'>Edit</a>
                                 <a href='delete_user.php?id=" . $row['id'] . "' class='btn btn-danger btn-sm'>Delete</a>
@@ -254,6 +261,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
                     <input type="text" class="form-control" id="username" name="username" placeholder="Enter a username" required>
                   </div>
                   <div class="mb-3">
+                      <label for="email" class="form-label">Email <span class="error">* <?php echo $emailErr; ?></span></label>
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Enter user email" required>
+                  </div>
+
+                  <div class="mb-3">
                     <label for="password" class="form-label">Password <span class="error">* <?php echo $passwordErr ?></span></label>
                     <input type="password" class="form-control" id="password" name="password"  placeholder="Enter a password" required>
 
@@ -279,7 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
 
     <footer class="footer">
       <div class="container">
-        <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+        <p>&copy; 2024 Patients pay System. All rights reserved.</p>
       </div>
     </footer>
   </div>

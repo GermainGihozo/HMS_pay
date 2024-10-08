@@ -6,21 +6,31 @@ include 'connection.php';
 // Functionality for updating admin details and project settings goes here...
 
 // Change Background Image
+// Assuming you have connected to your database in connection.php
+
 if (isset($_POST['change_bg'])) {
     if (isset($_FILES['background_image']) && $_FILES['background_image']['error'] === UPLOAD_ERR_OK) {
         $bgImage = $_FILES['background_image']['name'];
         $target = "images/" . basename($bgImage);
 
         if (move_uploaded_file($_FILES['background_image']['tmp_name'], $target)) {
-            // Update background image in database or settings file if needed
-            echo "<div class='alert alert-success'>Background image updated!</div>";
+            // Update the background image in the database
+            $stmt = $conn->prepare("UPDATE project_settings SET background_image = ? WHERE id = 1");
+            $stmt->bind_param("s", $bgImage);
+            if ($stmt->execute()) {
+                echo "<div class='alert alert-success'>Background image updated!</div>";
+            } else {
+                echo "<div class='alert alert-danger'>Failed to update background image.</div>";
+            }
+            $stmt->close();
         } else {
-            echo "<div class='alert alert-danger'>Failed to update background image.</div>";
+            echo "<div class='alert alert-danger'>Failed to upload image.</div>";
         }
     } else {
         echo "<div class='alert alert-danger'>No image uploaded or upload error.</div>";
     }
 }
+
 
 // Update Admin Name
 if (isset($_POST['update_name'])) {
@@ -46,7 +56,7 @@ if (isset($_POST['update_name'])) {
 if (isset($_POST['change_password'])) {
     $currentPassword = $_POST['current_password'];
     $newPassword = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
-    $userId = $_SESSION['id'];
+    $userId = $_SESSION['userId'];
 
     // Check current password
     $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
