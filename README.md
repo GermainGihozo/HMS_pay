@@ -1,4 +1,4 @@
-# Car Rental Information System
+# Patient pay System
 
 This repository contains my project for the **Final Year Project module (FYP)**for the Level seven, Year Three, IT Option students at the ICT Department.
 
