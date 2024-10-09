@@ -1,38 +1,77 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php'; // Ensure this path is correct based on your structure
+
 include 'connection.php';
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
+    $username = $_POST['username'];
 
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+    // Check if the user exists
+    $stmt = $conn->prepare("SELECT id, email FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($userId);
+        $stmt->bind_result($userId, $email);
         $stmt->fetch();
 
-        // Generate verification code
-        $verificationCode = rand(100000, 999999);
-        $expiry = date("Y-m-d H:i:s", strtotime("+15 minutes"));
+        // Generate a random verification code
+        $verificationCode = bin2hex(random_bytes(3)); // 6 characters
+        $expiry = date('Y-m-d H:i:s', strtotime('+30 minutes')); // expires in 30 minutes
 
-        // Store the code in the database
+        // Insert the verification code into the password_resets table
         $insertStmt = $conn->prepare("INSERT INTO password_resets (user_id, verification_code, expiry) VALUES (?, ?, ?)");
         $insertStmt->bind_param("iss", $userId, $verificationCode, $expiry);
         $insertStmt->execute();
-
-        // Send verification code via email
-        mail($email, "Password Reset Code", "Your password reset code is: $verificationCode");
-
-        // Redirect to verification page
-        header("Location: verify_code.php?email=$email");
+        
+        // Send the email with the verification code using PHPMailer
+        if (sendEmail($email, $verificationCode)) {
+            echo "A verification code has been sent to your email.";
+        } else {
+            echo "Failed to send verification email.";
+        }
+        
+        $insertStmt->close();
     } else {
-        echo "Email not found.";
+        echo "Username does not exist.";
     }
 
     $stmt->close();
     $conn->close();
+}
+
+function sendEmail($to, $verificationCode) {
+    $mail = new PHPMailer(true);
+    try {
+        // Server settings
+        $mail->isSMTP();                                            // Set mailer to use SMTP
+        $mail->Host       = 'smtp.gmail.com';                     // Specify main and backup SMTP servers
+        $mail->SMTPAuth   = true;                                 // Enable SMTP authentication
+        $mail->Username   = 'kezaliliane60@gmail.com';               // Your Gmail address
+        $mail->Password   = 'ttjr qfxq dfvr cwlr';                  // Your Gmail app password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;      // Enable TLS encryption, `ssl` also accepted
+        $mail->Port       = 465;                                  // TCP port to connect to
+
+        // Recipients
+        $mail->setFrom('kezaliliane60@gmail.com', 'Germain');      // Your name or company name
+        $mail->addAddress($to);                                   // Add a recipient
+
+        // Content
+        $mail->isHTML(true);                                      // Set email format to HTML
+        $mail->Subject = 'Password Reset Request';
+        $mail->Body    = "Use the following verification code to reset your password: <strong>$verificationCode</strong>";
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        return false;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -42,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Forgot Password</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
-<body class="bg-dark text-light">
+<body class="bg-dark text-light d-flex flex-column min-vh-100">
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -51,10 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <h4 class="card-title text-center mb-4">Forgot Password</h4>
                         <form action="forgot_password.php" method="post">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Send Reset Code</button>
+                            <button type="submit" class="btn btn-primary w-100">Send Confirmation Code</button>
                         </form>
                     </div>
                 </div>
